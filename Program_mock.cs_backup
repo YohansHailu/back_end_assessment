@@ -1,0 +1,173 @@
+using TaskManagerApp.Models;
+using MongoDB.Driver;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("appsettings.json");
+var configuration = builder.Configuration;
+
+// MongoDB Configuration
+var mongoClient = new MongoClient(configuration.GetConnectionString("MongoDB"));
+var database = mongoClient.GetDatabase(configuration.GetValue<string>("MongoDBSettings:DatabaseName"));
+
+
+
+var app = builder.Build();
+
+List<User> users = new();
+List<Project> projects = new();
+List<ProjectTask> tasks = new();
+
+app.MapGet("/hello", () =>
+{
+    return "hello";
+});
+
+
+
+// Tasks
+app.MapGet("/tasks", () =>
+{
+    return Results.Ok(tasks);
+});
+
+app.MapGet("/tasks/{id}", (string id) =>
+{
+    var task = tasks.FirstOrDefault(t => t.Id.Equals(id));
+    if (task == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(task);
+});
+
+app.MapPost("/tasks", (ProjectTask task) =>
+{
+    tasks.Add(task);
+    return Results.Created($"/tasks/{task.Id}", task);
+});
+
+app.MapPut("/tasks/{id}", (string id, ProjectTask updatedTask) =>
+{
+    var task = tasks.FirstOrDefault(t => t.Id.Equals(id));
+    if (task == null)
+    {
+        return Results.NotFound();
+    }
+    // Update task properties
+    return Results.NoContent();
+});
+
+app.MapDelete("/tasks/{id}", (string id) =>
+{
+    var task = tasks.FirstOrDefault(t => t.Id.Equals(id));
+    if (task == null)
+    {
+        return Results.NotFound();
+    }
+    tasks.Remove(task);
+    return Results.NoContent();
+});
+
+// Projects
+// Get All Projects
+app.MapGet("/projects", () =>
+{
+    return Results.Ok(projects);
+});
+
+// Get Project by ID
+app.MapGet("/projects/{id}", (string id) =>
+{
+    var project = projects.FirstOrDefault(p => p.Id.Equals(id));
+    if (project == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(project);
+});
+
+// Create Project
+app.MapPost("/projects", (Project project) =>
+{
+    projects.Add(project);
+    return Results.Created($"/projects/{project.Id}", project);
+});
+
+// Update Project
+app.MapPut("/projects/{id}", (string id, Project updatedProject) =>
+{
+    var project = projects.FirstOrDefault(p => p.Id.Equals(id));
+    if (project == null)
+    {
+        return Results.NotFound();
+    }
+    // Update project properties
+    return Results.NoContent();
+});
+
+// Delete Project
+app.MapDelete("/projects/{id}", (string id) =>
+{
+    var project = projects.FirstOrDefault(p => p.Id.Equals(id));
+    if (project == null)
+    {
+        return Results.NotFound();
+    }
+    projects.Remove(project);
+    return Results.NoContent();
+});
+
+
+
+//Users
+// Get All Users
+app.MapGet("/users", () =>
+{
+    return Results.Ok(users);
+});
+
+// Get User by ID
+app.MapGet("/users/{id}", (string id) =>
+{
+    var user = users.FirstOrDefault(u => u.Id.Equals(id));
+    if (user == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(user);
+});
+
+// Create User
+app.MapPost("/users", (User user) =>
+{
+    users.Add(user);
+    return Results.Created($"/users/{user.Id}", user);
+});
+
+// Update User
+app.MapPut("/users/{id}", (string id, User updatedUser) =>
+{
+    var user = users.FirstOrDefault(u => u.Id.Equals(id));
+    if (user == null)
+    {
+        return Results.NotFound();
+    }
+    // Update user properties
+    return Results.NoContent();
+});
+
+// Delete User
+app.MapDelete("/users/{id}", (string id) =>
+{
+    var user = users.FirstOrDefault(u => u.Id.Equals(id));
+    if (user == null)
+    {
+        return Results.NotFound();
+    }
+    users.Remove(user);
+    return Results.NoContent();
+});
+
+
+app.Run();
