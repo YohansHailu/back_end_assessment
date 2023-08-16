@@ -10,7 +10,8 @@ var database = mongoClient.GetDatabase(configuration.GetValue<string>("MongoDBSe
 builder.Services.AddSingleton<IMongoDatabase>(database);
 
 var app = builder.Build();
-TaskManagerAppEndPoints.ConfigureEndpoints(app);
-//ProjectManagerAppEndPoints.ConfigureEndpoints(app);
-//UserManagerAppEndPoints.ConfigureEndpoints(app);
+TaskEndPoints.ConfigureEndpoints(app);
+UserEndPoints.ConfigureEndpoints(app);
+ProjectsEndpoints.ConfigureEndpoints(app);
+RelationEndPoints.ConfigureEndpoints(app);
 app.Run();

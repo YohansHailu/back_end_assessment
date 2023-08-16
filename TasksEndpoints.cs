@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using TaskManagerApp.Models;
 
-public class TaskManagerAppEndPoints
+public class TaskEndPoints
 {
     public static void ConfigureEndpoints(WebApplication app)
     {
